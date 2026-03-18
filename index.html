@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Caderno de Estudos</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -14,7 +14,7 @@
             --text-light: #f8fafc;
             --primary: #3b82f6;
             --primary-hover: #2563eb;
-            --accent: #10b981; /* Cor para trabalhos */
+            --accent: #10b981; 
             --accent-hover: #059669;
             --card-bg: #ffffff;
         }
@@ -31,9 +31,10 @@
             height: 100vh;
             background-color: var(--bg-color);
             color: var(--text-main);
+            overflow: hidden; /* Evita rolagem na página inteira */
         }
 
-        /* Menu Lateral */
+        /* Menu Lateral (Desktop) */
         .sidebar {
             width: 250px;
             background-color: var(--sidebar-bg);
@@ -43,6 +44,7 @@
             padding: 20px 0;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             z-index: 10;
+            flex-shrink: 0; /* Impede o menu de encolher */
         }
 
         .sidebar h2 {
@@ -76,7 +78,7 @@
         .main-content {
             flex: 1;
             padding: 40px;
-            overflow-y: auto;
+            overflow-y: auto; /* Rolagem apenas na área de conteúdo */
             display: flex;
             flex-direction: column;
         }
@@ -90,6 +92,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .header h1 {
@@ -99,10 +103,16 @@
 
         /* Abas (Tabs) */
         .tabs {
-            display: none; /* Escondido até selecionar uma matéria */
+            display: none; 
             gap: 10px;
             border-bottom: 2px solid #e2e8f0;
             padding-bottom: 10px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
         }
 
         .tab-btn {
@@ -142,7 +152,7 @@
             font-size: 1rem;
             font-weight: 500;
             transition: background 0.3s ease;
-            display: none; /* Escondido inicialmente */
+            display: none; 
         }
 
         button.action-btn:hover {
@@ -232,7 +242,7 @@
             font-size: 0.85rem;
             color: #64748b;
             display: -webkit-box;
-            -webkit-line-clamp: 2; /* Mostra só 2 linhas de prévia */
+            -webkit-line-clamp: 2; 
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -278,6 +288,7 @@
             font-family: 'Inter', sans-serif;
             outline: none;
             transition: border-color 0.3s ease;
+            -webkit-appearance: none; /* Melhora aparência no iOS */
         }
 
         input[type="date"]:focus, textarea:focus {
@@ -309,6 +320,8 @@
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .reader-date {
@@ -334,6 +347,90 @@
             color: #1e293b;
             white-space: pre-wrap;
         }
+
+        /* ============================================================ */
+        /* RESPONSIVIDADE PARA CELULARES E TELAS MENORES                */
+        /* ============================================================ */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            /* Transforma a barra lateral em menu de topo rolável */
+            .sidebar {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                padding: 10px;
+                overflow-x: auto;
+                white-space: nowrap;
+                align-items: center;
+                /* Esconde a barra de rolagem mas mantém a função */
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
+            .sidebar::-webkit-scrollbar {
+                display: none;
+            }
+
+            .sidebar h2 {
+                display: none; /* Esconde a palavra "MATÉRIAS" para poupar espaço */
+            }
+
+            .menu-item {
+                padding: 10px 20px;
+                border-left: none;
+                border-radius: 20px; /* Formato de "pílula" */
+                margin-right: 10px;
+                background-color: var(--sidebar-hover);
+            }
+
+            .menu-item.active {
+                background-color: var(--primary);
+                color: white;
+                border-left: none;
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .header-top button {
+                width: 100%; /* Botão "Nova Anotação" ocupa toda a largura */
+            }
+
+            .items-grid {
+                grid-template-columns: 1fr; /* Cards ficam em coluna única */
+            }
+
+            .editor-container, .reader-container {
+                padding: 20px 15px;
+            }
+
+            .actions {
+                flex-direction: column-reverse; /* Empilha os botões (Salvar em cima) */
+            }
+
+            .actions button {
+                width: 100%;
+                padding: 15px; /* Mais alto para facilitar o toque no celular */
+            }
+            
+            textarea {
+                height: 250px; /* Reduz altura do texto no celular */
+            }
+        }
     </style>
 </head>
 <body>
@@ -357,7 +454,7 @@
         <div id="view-list" class="view active">
             <div class="items-grid" id="items-grid">
                 <div class="empty-state" style="border: none; background: transparent;">
-                    Bem-vindo! Escolha uma matéria no menu lateral para começar.
+                    Bem-vindo! Escolha uma matéria no menu para começar.
                 </div>
             </div>
         </div>
@@ -388,8 +485,8 @@
                 </div>
                 <div class="reader-content" id="read-content"></div>
                 <div class="actions">
-                    <button class="secondary" onclick="showView('list')">Voltar</button>
                     <button id="btn-edit" class="action-btn" style="display: block;" onclick="editCurrentItem()">Editar</button>
+                    <button class="secondary" onclick="showView('list')">Voltar para Lista</button>
                 </div>
             </div>
         </div>
@@ -399,20 +496,18 @@
         // Configurações e Estado
         const subjects = ['Ec', 'ESA', 'Psi', 'HDB', 'Port', 'Ora'];
         let currentSubject = '';
-        let currentTab = 'notes'; // 'notes' ou 'works'
+        let currentTab = 'notes'; 
         let currentItemId = null; 
 
         // Carrega e estrutura os dados
         let studyData = JSON.parse(localStorage.getItem('studyAppDataV2'));
 
-        // Se for a primeira vez rodando esta versão, cria a estrutura e migra dados antigos
         if (!studyData) {
             studyData = {};
-            let oldNotes = JSON.parse(localStorage.getItem('myStudyNotes')); // Dados da versão anterior
+            let oldNotes = JSON.parse(localStorage.getItem('myStudyNotes')); 
             
             subjects.forEach(sub => {
                 studyData[sub] = { notes: [], works: [] };
-                // Salva as anotações que você já tinha feito
                 if (oldNotes && oldNotes[sub] && Array.isArray(oldNotes[sub])) {
                     studyData[sub].notes = oldNotes[sub];
                 }
@@ -432,20 +527,17 @@
                 sidebar.appendChild(div);
             });
 
-            // Configura botão de novo item
             document.getElementById('btn-new-item').onclick = () => {
                 currentItemId = null;
                 document.getElementById('item-date').value = getTodayDate();
                 document.getElementById('item-text').value = '';
                 
-                // Ajusta os textos do editor
                 const isWork = currentTab === 'works';
                 document.getElementById('editor-title').textContent = isWork ? 'Novo Trabalho' : 'Nova Anotação';
                 document.getElementById('label-date').textContent = isWork ? 'Data de Entrega / Prazo:' : 'Data da Anotação:';
                 document.getElementById('label-text').textContent = isWork ? 'Descrição do Trabalho:' : 'Suas Anotações:';
                 document.getElementById('item-text').placeholder = isWork ? 'Detalhes, requisitos, links úteis...' : 'Escreva os pontos principais aqui...';
                 
-                // Ajusta cores
                 const saveBtn = document.getElementById('btn-save');
                 const textInput = document.getElementById('item-text');
                 const dateInput = document.getElementById('item-date');
@@ -468,15 +560,15 @@
             currentSubject = subject;
             document.getElementById('current-subject-title').textContent = subject;
             
-            // Mostra os controles
             document.getElementById('btn-new-item').style.display = 'block';
             document.getElementById('subject-tabs').style.display = 'flex';
 
-            // Atualiza visual do menu
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
 
-            // Força voltar para a lista sempre que trocar de matéria
+            // Centraliza o botão clicado na barra horizontal do celular
+            element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
             setTab(currentTab); 
         }
 
@@ -484,11 +576,9 @@
         function setTab(tabName) {
             currentTab = tabName;
             
-            // Atualiza visual das abas
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.querySelector(`.tab-btn[data-tab="${tabName}"]`).classList.add('active');
 
-            // Atualiza o botão principal
             const btnNew = document.getElementById('btn-new-item');
             if (tabName === 'works') {
                 btnNew.textContent = '+ Novo Trabalho';
@@ -502,14 +592,13 @@
             showView('list');
         }
 
-        // Renderizar Lista (Cards)
+        // Renderizar Lista
         function renderList() {
             const grid = document.getElementById('items-grid');
             grid.innerHTML = '';
             
             const items = studyData[currentSubject][currentTab] || [];
 
-            // Ordena pela data
             items.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             if (items.length === 0) {
@@ -524,8 +613,6 @@
                 card.className = `item-card ${currentTab === 'works' ? 'work-card' : ''}`;
                 
                 const [year, month, day] = item.date.split('-');
-                
-                // Cria um pequeno resumo do texto para o card
                 const shortText = item.text.length > 60 ? item.text.substring(0, 60) + '...' : item.text;
 
                 card.innerHTML = `
@@ -550,14 +637,12 @@
             const targetArray = studyData[currentSubject][currentTab];
 
             if (currentItemId) {
-                // Atualizando
                 const index = targetArray.findIndex(n => n.id === currentItemId);
                 if (index !== -1) {
                     targetArray[index].date = date;
                     targetArray[index].text = text;
                 }
             } else {
-                // Criando novo
                 targetArray.push({
                     id: Date.now().toString(),
                     date: date,
@@ -624,7 +709,11 @@
             document.getElementById('view-list').classList.remove('active');
             document.getElementById('view-editor').classList.remove('active');
             document.getElementById('view-reader').classList.remove('active');
+            
             document.getElementById(`view-${viewName}`).classList.add('active');
+            
+            // Rola a tela para o topo ao trocar de visão no celular
+            document.querySelector('.main-content').scrollTop = 0;
         }
 
         // Data de hoje

@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Caderno de Estudos</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -16,424 +20,118 @@
             --primary-hover: #2563eb;
             --accent: #10b981; 
             --accent-hover: #059669;
+            --danger: #ef4444; /* Cor do botão de excluir */
+            --danger-hover: #dc2626;
             --card-bg: #ffffff;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
         body {
-            display: flex;
-            height: 100vh;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            overflow: hidden; /* Evita rolagem na página inteira */
+            display: flex; height: 100vh; background-color: var(--bg-color); color: var(--text-main); overflow: hidden;
         }
 
-        /* Menu Lateral (Desktop) */
+        /* Menu Lateral */
         .sidebar {
-            width: 250px;
-            background-color: var(--sidebar-bg);
-            color: var(--text-light);
-            display: flex;
-            flex-direction: column;
-            padding: 20px 0;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            z-index: 10;
-            flex-shrink: 0; /* Impede o menu de encolher */
+            width: 250px; background-color: var(--sidebar-bg); color: var(--text-light);
+            display: flex; flex-direction: column; padding: 20px 0; box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 10; flex-shrink: 0;
         }
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            font-size: 1.2rem;
-            color: #94a3b8;
-        }
+        .sidebar h2 { text-align: center; margin-bottom: 30px; font-weight: 600; font-size: 1.2rem; color: #94a3b8; }
 
         .menu-item {
-            padding: 15px 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            border-left: 4px solid transparent;
+            padding: 15px 25px; cursor: pointer; transition: all 0.3s ease; font-weight: 500; border-left: 4px solid transparent;
         }
 
-        .menu-item:hover {
-            background-color: var(--sidebar-hover);
-        }
-
-        .menu-item.active {
-            background-color: var(--sidebar-hover);
-            border-left: 4px solid var(--primary);
-            color: var(--primary);
-        }
+        .menu-item:hover { background-color: var(--sidebar-hover); }
+        .menu-item.active { background-color: var(--sidebar-hover); border-left: 4px solid var(--primary); color: var(--primary); }
 
         /* Área Principal */
-        .main-content {
-            flex: 1;
-            padding: 40px;
-            overflow-y: auto; /* Rolagem apenas na área de conteúdo */
-            display: flex;
-            flex-direction: column;
-        }
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; }
 
-        .header {
-            margin-bottom: 20px;
-        }
+        .header { margin-bottom: 20px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px; }
+        .header h1 { font-size: 2rem; color: var(--sidebar-bg); }
 
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+        /* Abas */
+        .tabs { display: none; gap: 10px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; overflow-x: auto; white-space: nowrap; }
+        .tabs::-webkit-scrollbar { display: none; }
+        .tab-btn { background: none; color: #64748b; border: none; padding: 8px 16px; font-size: 1.1rem; font-weight: 600; cursor: pointer; border-radius: 6px; transition: all 0.2s ease; }
+        .tab-btn:hover { background-color: #f1f5f9; color: var(--sidebar-bg); }
+        .tab-btn.active { color: var(--primary); background-color: #eff6ff; }
+        .tab-btn[data-tab="works"].active { color: var(--accent); background-color: #ecfdf5; }
 
-        .header h1 {
-            font-size: 2rem;
-            color: var(--sidebar-bg);
-        }
-
-        /* Abas (Tabs) */
-        .tabs {
-            display: none; 
-            gap: 10px;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 10px;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-        .tabs::-webkit-scrollbar {
-            display: none;
-        }
-
-        .tab-btn {
-            background: none;
-            color: #64748b;
-            border: none;
-            padding: 8px 16px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .tab-btn:hover {
-            background-color: #f1f5f9;
-            color: var(--sidebar-bg);
-        }
-
-        .tab-btn.active {
-            color: var(--primary);
-            background-color: #eff6ff;
-        }
-
-        .tab-btn[data-tab="works"].active {
-            color: var(--accent);
-            background-color: #ecfdf5;
-        }
-
-        button.action-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: background 0.3s ease;
-            display: none; 
-        }
-
-        button.action-btn:hover {
-            background-color: var(--primary-hover);
-        }
-
-        button.action-btn.works-mode {
-            background-color: var(--accent);
-        }
+        /* Botões */
+        button.action-btn { background-color: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: 500; transition: background 0.3s ease; display: none; }
+        button.action-btn:hover { background-color: var(--primary-hover); }
+        button.action-btn.works-mode { background-color: var(--accent); }
+        button.action-btn.works-mode:hover { background-color: var(--accent-hover); }
         
-        button.action-btn.works-mode:hover {
-            background-color: var(--accent-hover);
-        }
+        button.secondary { background-color: #64748b; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; }
+        button.secondary:hover { background-color: #475569; }
 
-        button.secondary {
-            background-color: #64748b;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        
-        button.secondary:hover {
-            background-color: #475569;
-        }
+        button.danger-btn { background-color: var(--danger); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: 500; transition: background 0.3s ease; }
+        button.danger-btn:hover { background-color: var(--danger-hover); }
 
-        /* Telas (Views) */
-        .view {
-            display: none;
-            animation: fadeIn 0.3s ease;
-            flex: 1;
-        }
+        /* Telas e Cards */
+        .view { display: none; animation: fadeIn 0.3s ease; flex: 1; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .view.active {
-            display: block;
-        }
+        .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .item-card { background-color: var(--card-bg); padding: 25px 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: center; }
+        .item-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); border-color: var(--primary); }
+        .item-card.work-card:hover { border-color: var(--accent); }
+        .item-card h3 { color: var(--primary); font-size: 1.2rem; margin-bottom: 8px; }
+        .item-card.work-card h3 { color: var(--accent); }
+        .item-preview { font-size: 0.85rem; color: #64748b; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .empty-state { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #94a3b8; font-style: italic; background: #ffffff; border-radius: 10px; border: 1px dashed #cbd5e1; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* Formulários e Leitura */
+        .editor-container, .reader-container { background-color: var(--card-bg); padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); max-width: 800px; margin: 0 auto; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #475569; }
+        input[type="date"], textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; outline: none; transition: border-color 0.3s ease; -webkit-appearance: none; }
+        input[type="date"]:focus, textarea:focus { border-color: var(--primary); }
+        .works-mode-input:focus { border-color: var(--accent) !important; }
+        textarea { height: 300px; resize: vertical; line-height: 1.6; }
+        .actions { display: flex; gap: 15px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap; }
 
-        /* Grid de Cards */
-        .items-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-        }
-
-        .item-card {
-            background-color: var(--card-bg);
-            padding: 25px 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            border: 1px solid #e2e8f0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .item-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-            border-color: var(--primary);
-        }
-
-        .item-card.work-card:hover {
-            border-color: var(--accent);
-        }
-
-        .item-card h3 {
-            color: var(--primary);
-            font-size: 1.2rem;
-            margin-bottom: 8px;
-        }
-
-        .item-card.work-card h3 {
-            color: var(--accent);
-        }
-
-        .item-preview {
-            font-size: 0.85rem;
-            color: #64748b;
-            display: -webkit-box;
-            -webkit-line-clamp: 2; 
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 60px 20px;
-            color: #94a3b8;
-            font-style: italic;
-            background: #ffffff;
-            border-radius: 10px;
-            border: 1px dashed #cbd5e1;
-        }
-
-        /* Formulário Editor */
-        .editor-container, .reader-container {
-            background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #475569;
-        }
-
-        input[type="date"], textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-family: 'Inter', sans-serif;
-            outline: none;
-            transition: border-color 0.3s ease;
-            -webkit-appearance: none; /* Melhora aparência no iOS */
-        }
-
-        input[type="date"]:focus, textarea:focus {
-            border-color: var(--primary);
-        }
-
-        .works-mode-input:focus {
-            border-color: var(--accent) !important;
-        }
-
-        textarea {
-            height: 300px;
-            resize: vertical;
-            line-height: 1.6;
-        }
-
-        .actions {
-            display: flex;
-            gap: 15px;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-
-        /* Leitor */
-        .reader-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e2e8f0;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .reader-date {
-            color: #64748b;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .reader-badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: white;
-        }
-
+        .reader-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 10px; }
+        .reader-date { color: #64748b; font-size: 1rem; font-weight: 600; }
+        .reader-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: white; }
         .badge-note { background-color: var(--primary); }
         .badge-work { background-color: var(--accent); }
+        .reader-content { font-size: 1.1rem; line-height: 1.8; color: #1e293b; white-space: pre-wrap; }
 
-        .reader-content {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #1e293b;
-            white-space: pre-wrap;
-        }
+        #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 100; display: flex; justify-content: center; align-items: center; flex-direction: column; font-size: 1.2rem; color: var(--primary); font-weight: 600; }
 
-        /* ============================================================ */
-        /* RESPONSIVIDADE PARA CELULARES E TELAS MENORES                */
-        /* ============================================================ */
+        /* Ajustes para Celular */
         @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-
-            /* Transforma a barra lateral em menu de topo rolável */
-            .sidebar {
-                width: 100%;
-                height: auto;
-                flex-direction: row;
-                padding: 10px;
-                overflow-x: auto;
-                white-space: nowrap;
-                align-items: center;
-                /* Esconde a barra de rolagem mas mantém a função */
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-            }
-
-            .sidebar::-webkit-scrollbar {
-                display: none;
-            }
-
-            .sidebar h2 {
-                display: none; /* Esconde a palavra "MATÉRIAS" para poupar espaço */
-            }
-
-            .menu-item {
-                padding: 10px 20px;
-                border-left: none;
-                border-radius: 20px; /* Formato de "pílula" */
-                margin-right: 10px;
-                background-color: var(--sidebar-hover);
-            }
-
-            .menu-item.active {
-                background-color: var(--primary);
-                color: white;
-                border-left: none;
-            }
-
-            .main-content {
-                padding: 20px 15px;
-            }
-
-            .header h1 {
-                font-size: 1.5rem;
-            }
-
-            .header-top {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-            .header-top button {
-                width: 100%; /* Botão "Nova Anotação" ocupa toda a largura */
-            }
-
-            .items-grid {
-                grid-template-columns: 1fr; /* Cards ficam em coluna única */
-            }
-
-            .editor-container, .reader-container {
-                padding: 20px 15px;
-            }
-
-            .actions {
-                flex-direction: column-reverse; /* Empilha os botões (Salvar em cima) */
-            }
-
-            .actions button {
-                width: 100%;
-                padding: 15px; /* Mais alto para facilitar o toque no celular */
-            }
-            
-            textarea {
-                height: 250px; /* Reduz altura do texto no celular */
-            }
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; flex-direction: row; padding: 10px; overflow-x: auto; white-space: nowrap; align-items: center; -ms-overflow-style: none; scrollbar-width: none; }
+            .sidebar::-webkit-scrollbar { display: none; }
+            .sidebar h2 { display: none; }
+            .menu-item { padding: 10px 20px; border-left: none; border-radius: 20px; margin-right: 10px; background-color: var(--sidebar-hover); }
+            .menu-item.active { background-color: var(--primary); color: white; border-left: none; }
+            .main-content { padding: 20px 15px; }
+            .header h1 { font-size: 1.5rem; }
+            .header-top { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .header-top button { width: 100%; }
+            .items-grid { grid-template-columns: 1fr; }
+            .editor-container, .reader-container { padding: 20px 15px; }
+            .actions { flex-direction: column-reverse; }
+            .actions button { width: 100%; padding: 15px; margin-bottom: 5px; }
+            textarea { height: 250px; }
         }
     </style>
 </head>
 <body>
+
+    <div id="loading-screen">
+        <p>Sincronizando com a Nuvem...</p>
+    </div>
 
     <aside class="sidebar" id="sidebar">
         <h2>MATÉRIAS</h2>
@@ -442,8 +140,8 @@
     <main class="main-content">
         <div class="header">
             <div class="header-top">
-                <h1 id="current-subject-title">Selecione uma matéria</h1>
-                <button id="btn-new-item" class="action-btn">+ Nova Anotação</button>
+                <h1 id="current-subject-title">Carregando...</h1>
+                <button id="btn-new-item" class="action-btn">+ Novo</button>
             </div>
             <div class="tabs" id="subject-tabs">
                 <button class="tab-btn active" data-tab="notes" onclick="setTab('notes')">Anotações</button>
@@ -454,14 +152,14 @@
         <div id="view-list" class="view active">
             <div class="items-grid" id="items-grid">
                 <div class="empty-state" style="border: none; background: transparent;">
-                    Bem-vindo! Escolha uma matéria no menu para começar.
+                    Escolha uma matéria no menu para começar.
                 </div>
             </div>
         </div>
 
         <div id="view-editor" class="view">
             <div class="editor-container">
-                <h2 id="editor-title" style="margin-bottom: 20px; color: var(--sidebar-bg);">Nova Anotação</h2>
+                <h2 id="editor-title" style="margin-bottom: 20px; color: var(--sidebar-bg);">Novo Item</h2>
                 <div class="input-group">
                     <label id="label-date" for="item-date">Data:</label>
                     <input type="date" id="item-date">
@@ -472,7 +170,7 @@
                 </div>
                 <div class="actions">
                     <button class="secondary" onclick="showView('list')">Cancelar</button>
-                    <button id="btn-save" class="action-btn" style="display: block;" onclick="saveItem()">Salvar</button>
+                    <button id="btn-save" class="action-btn" style="display: block;" onclick="saveItem()">Salvar na Nuvem</button>
                 </div>
             </div>
         </div>
@@ -485,40 +183,67 @@
                 </div>
                 <div class="reader-content" id="read-content"></div>
                 <div class="actions">
+                    <button id="btn-delete" class="danger-btn" onclick="deleteCurrentItem()">Excluir</button>
                     <button id="btn-edit" class="action-btn" style="display: block;" onclick="editCurrentItem()">Editar</button>
-                    <button class="secondary" onclick="showView('list')">Voltar para Lista</button>
+                    <button class="secondary" onclick="showView('list')">Voltar</button>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-        // Configurações e Estado
+        // =========================================================================
+        // CONFIGURAÇÃO DO FIREBASE (Com as suas chaves da imagem)
+        // =========================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVZ5iSxVCs1w32Ibjg2DILUg05fH4H1uc",
+            authDomain: "meus-estudos-3c148.firebaseapp.com",
+            projectId: "meus-estudos-3c148",
+            storageBucket: "meus-estudos-3c148.firebasestorage.app",
+            messagingSenderId: "608408828720",
+            appId: "1:608408828720:web:638ae4ce9419e3340926f5",
+            measurementId: "G-K775CD0YST"
+        };
+
+        // Inicializa a conexão
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // =========================================================================
+        // LÓGICA DO SITE
+        // =========================================================================
         const subjects = ['Ec', 'ESA', 'Psi', 'HDB', 'Port', 'Ora'];
         let currentSubject = '';
         let currentTab = 'notes'; 
         let currentItemId = null; 
+        let studyData = {}; 
 
-        // Carrega e estrutura os dados
-        let studyData = JSON.parse(localStorage.getItem('studyAppDataV2'));
-
-        if (!studyData) {
-            studyData = {};
-            let oldNotes = JSON.parse(localStorage.getItem('myStudyNotes')); 
-            
-            subjects.forEach(sub => {
-                studyData[sub] = { notes: [], works: [] };
-                if (oldNotes && oldNotes[sub] && Array.isArray(oldNotes[sub])) {
-                    studyData[sub].notes = oldNotes[sub];
+        // Conecta com o servidor ao abrir
+        async function loadDataFromCloud() {
+            try {
+                const docRef = db.collection('banco_estudos').doc('meu_caderno_oficial');
+                const doc = await docRef.get();
+                
+                if (doc.exists) {
+                    studyData = doc.data();
+                } else {
+                    subjects.forEach(sub => {
+                        studyData[sub] = { notes: [], works: [] };
+                    });
                 }
-            });
-            saveData();
+                
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('current-subject-title').textContent = "Selecione uma matéria";
+                initSidebar();
+
+            } catch (error) {
+                console.error("Erro:", error);
+                document.getElementById('loading-screen').innerHTML = "<p style='color:red; text-align:center; padding: 20px;'>Erro de conexão.<br>Lembre-se de ativar o <b>Firestore Database</b> no 'Modo de Teste' dentro do painel do Firebase.</p>";
+            }
         }
 
-        // Inicialização
-        function init() {
+        function initSidebar() {
             const sidebar = document.getElementById('sidebar');
-            
             subjects.forEach(sub => {
                 const div = document.createElement('div');
                 div.className = 'menu-item';
@@ -535,12 +260,11 @@
                 const isWork = currentTab === 'works';
                 document.getElementById('editor-title').textContent = isWork ? 'Novo Trabalho' : 'Nova Anotação';
                 document.getElementById('label-date').textContent = isWork ? 'Data de Entrega / Prazo:' : 'Data da Anotação:';
-                document.getElementById('label-text').textContent = isWork ? 'Descrição do Trabalho:' : 'Suas Anotações:';
-                document.getElementById('item-text').placeholder = isWork ? 'Detalhes, requisitos, links úteis...' : 'Escreva os pontos principais aqui...';
                 
                 const saveBtn = document.getElementById('btn-save');
                 const textInput = document.getElementById('item-text');
                 const dateInput = document.getElementById('item-date');
+                
                 if (isWork) {
                     saveBtn.classList.add('works-mode');
                     textInput.classList.add('works-mode-input');
@@ -550,32 +274,26 @@
                     textInput.classList.remove('works-mode-input');
                     dateInput.classList.remove('works-mode-input');
                 }
-
+                
                 showView('editor');
             };
         }
 
-        // Selecionar Matéria
         function selectSubject(subject, element) {
             currentSubject = subject;
             document.getElementById('current-subject-title').textContent = subject;
-            
             document.getElementById('btn-new-item').style.display = 'block';
             document.getElementById('subject-tabs').style.display = 'flex';
-
+            
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
-
-            // Centraliza o botão clicado na barra horizontal do celular
+            
             element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-
             setTab(currentTab); 
         }
 
-        // Mudar entre Anotações e Trabalhos
         function setTab(tabName) {
             currentTab = tabName;
-            
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.querySelector(`.tab-btn[data-tab="${tabName}"]`).classList.add('active');
 
@@ -589,84 +307,115 @@
             }
 
             renderList();
-            showView('list');
         }
 
-        // Renderizar Lista
         function renderList() {
             const grid = document.getElementById('items-grid');
             grid.innerHTML = '';
             
+            if (!studyData[currentSubject]) studyData[currentSubject] = { notes: [], works: [] };
             const items = studyData[currentSubject][currentTab] || [];
-
+            
             items.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             if (items.length === 0) {
-                const isWork = currentTab === 'works';
-                const msg = isWork ? 'Nenhum trabalho cadastrado.' : 'Nenhuma anotação nesta matéria.';
+                const msg = currentTab === 'works' ? 'Nenhum trabalho cadastrado.' : 'Nenhuma anotação nesta matéria.';
                 grid.innerHTML = `<div class="empty-state">${msg}<br>Clique no botão acima para começar.</div>`;
-                return;
+            } else {
+                items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = `item-card ${currentTab === 'works' ? 'work-card' : ''}`;
+                    
+                    const [year, month, day] = item.date.split('-');
+                    const shortText = item.text.length > 60 ? item.text.substring(0, 60) + '...' : item.text;
+
+                    card.innerHTML = `<h3>${day}/${month}/${year}</h3><div class="item-preview">${shortText}</div>`;
+                    card.onclick = () => openReader(item.id);
+                    grid.appendChild(card);
+                });
             }
-
-            items.forEach(item => {
-                const card = document.createElement('div');
-                card.className = `item-card ${currentTab === 'works' ? 'work-card' : ''}`;
-                
-                const [year, month, day] = item.date.split('-');
-                const shortText = item.text.length > 60 ? item.text.substring(0, 60) + '...' : item.text;
-
-                card.innerHTML = `
-                    <h3>${day}/${month}/${year}</h3>
-                    <div class="item-preview">${shortText}</div>
-                `;
-                card.onclick = () => openReader(item.id);
-                grid.appendChild(card);
-            });
+            showView('list');
         }
 
-        // Salvar Item
-        function saveItem() {
+        async function saveItem() {
             const date = document.getElementById('item-date').value;
             const text = document.getElementById('item-text').value;
+            const btnSave = document.getElementById('btn-save');
 
-            if (!date || !text.trim()) {
-                alert('Por favor, preencha a data e a descrição.');
-                return;
-            }
+            if (!date || !text.trim()) return alert('Por favor, preencha a data e o texto.');
+
+            btnSave.textContent = "Salvando...";
+            btnSave.disabled = true;
 
             const targetArray = studyData[currentSubject][currentTab];
 
             if (currentItemId) {
                 const index = targetArray.findIndex(n => n.id === currentItemId);
-                if (index !== -1) {
-                    targetArray[index].date = date;
-                    targetArray[index].text = text;
-                }
+                if (index !== -1) { targetArray[index].date = date; targetArray[index].text = text; }
             } else {
-                targetArray.push({
-                    id: Date.now().toString(),
-                    date: date,
-                    text: text
-                });
+                targetArray.push({ id: Date.now().toString(), date: date, text: text });
             }
 
-            saveData();
-            renderList();
-            showView('list');
+            try {
+                await db.collection('banco_estudos').doc('meu_caderno_oficial').set(studyData);
+                renderList();
+            } catch (e) { 
+                console.error(e);
+                alert("Erro ao salvar. Verifique se o Firestore está configurado em Modo de Teste."); 
+            } finally {
+                btnSave.textContent = "Salvar na Nuvem";
+                btnSave.disabled = false;
+            }
         }
 
-        // Abrir Leitor
+        // ==========================================
+        // NOVA FUNÇÃO: EXCLUIR ITEM DA NUVEM
+        // ==========================================
+        async function deleteCurrentItem() {
+            if (!currentItemId) return;
+
+            // Pergunta de segurança para não apagar sem querer
+            const isWork = currentTab === 'works';
+            const confirmMsg = isWork 
+                ? "Tem certeza que deseja excluir este TRABALHO? Essa ação não pode ser desfeita." 
+                : "Tem certeza que deseja excluir esta ANOTAÇÃO? Essa ação não pode ser desfeita.";
+
+            if (confirm(confirmMsg)) {
+                const btnDelete = document.getElementById('btn-delete');
+                btnDelete.textContent = "Excluindo...";
+                btnDelete.disabled = true;
+
+                const targetArray = studyData[currentSubject][currentTab];
+                const index = targetArray.findIndex(n => n.id === currentItemId);
+
+                if (index !== -1) {
+                    // Remove o item da lista
+                    targetArray.splice(index, 1);
+
+                    try {
+                        // Atualiza a nuvem com a lista nova (sem o item)
+                        await db.collection('banco_estudos').doc('meu_caderno_oficial').set(studyData);
+                        renderList(); // Volta pra tela inicial
+                    } catch (e) {
+                        console.error(e);
+                        alert("Erro ao excluir. Verifique sua conexão com a internet.");
+                    } finally {
+                        btnDelete.textContent = "Excluir";
+                        btnDelete.disabled = false;
+                    }
+                }
+            }
+        }
+
         function openReader(id) {
             const item = studyData[currentSubject][currentTab].find(n => n.id === id);
             if (!item) return;
 
             currentItemId = id;
             const isWork = currentTab === 'works';
-
             const [year, month, day] = item.date.split('-');
-            const datePrefix = isWork ? 'Prazo / Data: ' : 'Anotações de: ';
             
-            document.getElementById('read-date').textContent = `${datePrefix} ${day}/${month}/${year}`;
+            document.getElementById('read-date').textContent = `${isWork ? 'Prazo / Data: ' : 'Anotações de: '} ${day}/${month}/${year}`;
             document.getElementById('read-content').textContent = item.text;
 
             const badge = document.getElementById('read-badge');
@@ -674,49 +423,30 @@
             badge.className = `reader-badge ${isWork ? 'badge-work' : 'badge-note'}`;
 
             const btnEdit = document.getElementById('btn-edit');
-            if (isWork) {
-                btnEdit.classList.add('works-mode');
-            } else {
-                btnEdit.classList.remove('works-mode');
-            }
+            if (isWork) btnEdit.classList.add('works-mode');
+            else btnEdit.classList.remove('works-mode');
 
             showView('reader');
         }
 
-        // Editar Item Atual
         function editCurrentItem() {
             const item = studyData[currentSubject][currentTab].find(n => n.id === currentItemId);
-            if (!item) return;
-
+            
             const isWork = currentTab === 'works';
             document.getElementById('editor-title').textContent = isWork ? 'Editar Trabalho' : 'Editar Anotação';
             document.getElementById('label-date').textContent = isWork ? 'Data de Entrega / Prazo:' : 'Data da Anotação:';
-            document.getElementById('label-text').textContent = isWork ? 'Descrição do Trabalho:' : 'Suas Anotações:';
             
             document.getElementById('item-date').value = item.date;
             document.getElementById('item-text').value = item.text;
-
             showView('editor');
         }
 
-        // Salvar no Navegador
-        function saveData() {
-            localStorage.setItem('studyAppDataV2', JSON.stringify(studyData));
-        }
-
-        // Gerenciador de Telas
         function showView(viewName) {
-            document.getElementById('view-list').classList.remove('active');
-            document.getElementById('view-editor').classList.remove('active');
-            document.getElementById('view-reader').classList.remove('active');
-            
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(`view-${viewName}`).classList.add('active');
-            
-            // Rola a tela para o topo ao trocar de visão no celular
             document.querySelector('.main-content').scrollTop = 0;
         }
 
-        // Data de hoje
         function getTodayDate() {
             const today = new Date();
             const yyyy = today.getFullYear();
@@ -725,8 +455,7 @@
             return `${yyyy}-${mm}-${dd}`;
         }
 
-        // Inicia
-        window.onload = init;
+        window.onload = loadDataFromCloud;
     </script>
 </body>
 </html>

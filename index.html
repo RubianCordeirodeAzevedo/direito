@@ -35,40 +35,30 @@
         body { display: flex; height: 100vh; background-color: var(--bg-color); color: var(--text-main); overflow: hidden; }
 
         /* Menu Lateral */
-        .sidebar {
-            width: 260px; background-color: var(--sidebar-bg); color: var(--text-light);
-            display: flex; flex-direction: column; padding: 20px 0; box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            z-index: 10; flex-shrink: 0;
-        }
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: var(--text-light); display: flex; flex-direction: column; padding: 20px 0; box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 10; flex-shrink: 0; }
         .sidebar-header { text-align: center; margin-bottom: 25px; padding: 0 15px; }
         .sidebar-header h2 { font-weight: 600; font-size: 1.1rem; color: #94a3b8; letter-spacing: 1px; }
         .sidebar-sep { border-top: 1px solid #334155; margin: 15px 20px; }
-
         .menu-section-title { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; padding: 10px 25px 5px; font-weight: 600; }
-
-        .menu-item {
-            padding: 12px 25px; cursor: pointer; transition: 0.2s; font-weight: 500; border-left: 4px solid transparent;
-            display: flex; align-items: center; gap: 10px; font-size: 0.95rem;
-        }
+        .menu-item { padding: 12px 25px; cursor: pointer; transition: 0.2s; font-weight: 500; border-left: 4px solid transparent; display: flex; align-items: center; gap: 10px; font-size: 0.95rem; }
         .menu-item:hover { background-color: var(--sidebar-hover); }
         .menu-item.active { background-color: var(--sidebar-hover); border-left-color: var(--primary); color: var(--primary); }
         .menu-item.ai-item.active { border-left-color: #a78bfa; color: #a78bfa; }
 
         /* Área Principal */
         .main-content { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; position: relative; }
-
         .header { margin-bottom: 20px; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
         .header h1 { font-size: 1.8rem; color: var(--sidebar-bg); }
 
-        /* Abas de Matéria */
+        /* Abas */
         .tabs { display: none; gap: 8px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; overflow-x: auto; white-space: nowrap; margin-bottom: 15px; }
         .tabs::-webkit-scrollbar { display: none; }
         .tab-btn { background: none; color: #64748b; border: none; padding: 8px 16px; font-size: 1rem; font-weight: 600; cursor: pointer; border-radius: 6px; }
         .tab-btn.active { color: var(--primary); background-color: #eff6ff; }
         .tab-btn[data-tab="works"].active { color: var(--accent); background-color: #ecfdf5; }
 
-        /* Botões Gerais */
+        /* Botões */
         button { cursor: pointer; font-weight: 500; border-radius: 6px; transition: 0.2s; border: none; font-size: 0.95rem; }
         .btn-p { background-color: var(--primary); color: white; padding: 10px 20px; }
         .btn-p:hover { background-color: var(--primary-hover); }
@@ -78,13 +68,15 @@
         .btn-d:hover { background-color: #dc2626; }
         .btn-works { background-color: var(--accent); color: white; padding: 10px 20px; }
         .btn-works:hover { background-color: var(--accent-hover); }
+        
+        /* Botão Novo: Resetar Chave API */
+        .btn-reset { background: transparent; color: #64748b; border: 1px solid #cbd5e1; padding: 6px 12px; font-size: 0.85rem; }
+        .btn-reset:hover { background: #f1f5f9; color: var(--danger); border-color: var(--danger); }
 
-        /* Telas (Views) - A CORREÇÃO ESTÁ PRINCIPALMENTE NESTA LÓGICA NO HTML ABAIXO */
+        /* Views & Grids */
         .view { display: none; animation: fadeIn 0.3s ease; flex: 1; flex-direction: column; }
         .view.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Grid de Cards */
         .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; align-content: start; }
         .item-card { background-color: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #e2e8f0; transition: 0.2s; display: flex; flex-direction: column; gap: 8px; }
         .item-card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.08); border-color: var(--primary); }
@@ -95,21 +87,19 @@
         .item-preview { font-size: 0.85rem; color: #64748b; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.5; }
         .empty-state { grid-column: 1 / -1; text-align: center; padding: 50px 20px; color: #94a3b8; font-style: italic; background: #ffffff; border-radius: 10px; border: 1px dashed #cbd5e1; margin-top: 20px; }
 
-        /* Contêineres */
+        /* Editor/Leitor */
         .panel { background-color: var(--card-bg); padding: 25px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; max-width: 900px; margin: 0 auto; width: 100%; }
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; margin-bottom: 6px; font-weight: 500; color: #475569; font-size: 0.9rem; }
-        input[type="date"], input[type="text"], textarea, select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; outline: none; transition: 0.2s; background: #fff; }
-        input:focus, textarea:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        input[type="date"], input[type="text"], textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; outline: none; transition: 0.2s; background: #fff; }
+        input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
         textarea { height: 350px; resize: vertical; line-height: 1.6; }
         .form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap; }
-
-        /* Leitor */
         .reader-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 8px; }
         .reader-meta { color: #64748b; font-size: 0.9rem; font-weight: 500; }
         .reader-content { font-size: 1.05rem; line-height: 1.8; color: #1e293b; white-space: pre-wrap; margin-bottom: 20px; }
 
-        /* Área da IA */
+        /* IA Chat */
         #view-ai-chat { display: none; flex-direction: column; }
         #view-ai-chat.active { display: flex; }
         .api-key-config { background: #ede9fe; border: 1px solid #ddd6fe; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
@@ -129,12 +119,10 @@
         #btn-ai-send:disabled { background: #cbd5e1; cursor: not-allowed; }
         .typing-loader { font-size: 0.8rem; color: #94a3b8; font-style: italic; margin-left: 10px; display: none; margin-bottom: 10px; }
 
-        /* Loader */
         #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 100; display: flex; justify-content: center; align-items: center; flex-direction: column; font-size: 1.2rem; color: var(--primary); font-weight: 600; backdrop-filter: blur(5px); }
         .loader-spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Celular */
         @media (max-width: 768px) {
             body { flex-direction: column; }
             .sidebar { width: 100%; height: auto; flex-direction: row; padding: 5px; overflow-x: auto; white-space: nowrap; -ms-overflow-style: none; scrollbar-width: none; }
@@ -181,6 +169,7 @@
             <div class="header-top">
                 <h1 id="main-title">Selecione uma opção</h1>
                 <button id="btn-global-new" class="btn-p" style="display: none;">+ Novo</button>
+                <button id="btn-reset-key" class="btn-reset" style="display: none;" onclick="resetApiKey()">Trocar Chave API</button>
             </div>
             <div class="tabs" id="subject-tabs">
                 <button class="tab-btn active" data-tab="notes" onclick="setTab('notes')">Anotações Aula</button>
@@ -206,8 +195,8 @@
         <div id="view-ai-chat" class="view">
             <div class="api-key-config" id="api-key-area">
                 <i>🔑</i>
-                <p>Para usar a IA grátis, cole sua <strong>Chave API do Google Gemini</strong> aqui.</p>
-                <input type="password" id="api-key-input" placeholder="Cole sua chave aqui...">
+                <p>Cole sua <strong>Chave API do Google Gemini</strong> aqui. Copie com cuidado para não incluir espaços vazios no final.</p>
+                <input type="password" id="api-key-input" placeholder="AIzaSy...">
                 <button class="btn-p" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveApiKey()">Salvar</button>
             </div>
 
@@ -215,7 +204,7 @@
                 <div class="chat-messages" id="chat-messages">
                     <div class="message ai">
                         <div class="message-meta">Assistente de Estudos</div>
-                        Olá ! Eu sou sua IA escolar. Eu li todas as suas anotações de aula, trabalhos e os textos da sua Biblioteca. Pergunte-me qualquer coisa!
+                        Olá Joseph! Eu sou sua IA. Eu li todas as suas anotações de aula, trabalhos e os textos da sua Biblioteca. Pergunte-me qualquer coisa!
                     </div>
                 </div>
                 <div class="typing-loader" id="ai-loading">IA pensando...</div>
@@ -229,22 +218,18 @@
         <div id="view-editor" class="view">
             <div class="panel">
                 <h2 id="editor-title" style="margin-bottom: 20px; color: var(--sidebar-bg);">Novo Registro</h2>
-                
                 <div class="input-group" id="group-date">
                     <label id="label-date" for="item-date">Data:</label>
                     <input type="date" id="item-date">
                 </div>
-
                 <div class="input-group" id="group-title" style="display: none;">
                     <label for="item-title">Título do Texto (Ex: Lei 14.133):</label>
                     <input type="text" id="item-title" placeholder="Nome para identificar o texto">
                 </div>
-
                 <div class="input-group">
                     <label id="label-text" for="item-text">Conteúdo:</label>
                     <textarea id="item-text" placeholder="Escreva ou cole o conteúdo aqui..."></textarea>
                 </div>
-                
                 <div class="form-actions">
                     <button class="btn-s" onclick="cancelEditor()">Cancelar</button>
                     <button id="btn-save" class="btn-p" onclick="saveData()">Salvar na Nuvem</button>
@@ -286,7 +271,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // ESTADO GLOBAL
         const subjects = ['Ec', 'ESA', 'Psi', 'HDB', 'Port', 'Ora'];
         let currentSubject = ''; 
         let currentTab = 'notes'; 
@@ -295,7 +279,6 @@
         let studyData = {}; 
         let editorMode = 'subject'; 
 
-        // CARREGAMENTO
         async function loadAllData() {
             try {
                 const docRef = db.collection('banco_estudos_v3').doc('id_joseph_unico');
@@ -337,30 +320,22 @@
             });
         }
 
-        // NAVEGAÇÃO
         function selectSubject(sub, element) {
-            currentSubject = sub;
-            currentView = 'list';
-            currentTab = 'notes'; 
-            editorMode = 'subject';
-
+            currentSubject = sub; currentView = 'list'; currentTab = 'notes'; editorMode = 'subject';
             updateHeader(sub, true, '+ Nova Anotação Aula');
             updateSidebarActive(element);
-            
             document.getElementById('subject-tabs').style.display = 'flex';
+            document.getElementById('btn-reset-key').style.display = 'none'; // Esconde botão de trocar chave
             const tabBtns = document.querySelectorAll('.tab-btn');
             tabBtns.classList.add('active'); tabBtns.classList.remove('active');
-            
-            renderSubjectList();
-            showView('list');
+            renderSubjectList(); showView('list');
         }
 
         function selectStaticView(viewName, element) {
-            currentSubject = '';
-            currentView = viewName;
-            
+            currentSubject = ''; currentView = viewName;
             document.getElementById('subject-tabs').style.display = 'none';
             document.getElementById('btn-global-new').style.display = 'none';
+            document.getElementById('btn-reset-key').style.display = viewName === 'ai-chat' ? 'block' : 'none'; // Mostra botão de trocar chave só no chat
 
             updateSidebarActive(element);
 
@@ -378,23 +353,14 @@
             currentTab = tabName;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.tab-btn[data-tab="${tabName}"]`).classList.add('active');
-            
             const btnNew = document.getElementById('btn-global-new');
-            if (tabName === 'works') {
-                btnNew.textContent = '+ Novo Trabalho/Prazo';
-                btnNew.classList.add('btn-works');
-            } else {
-                btnNew.textContent = '+ Nova Anotação Aula';
-                btnNew.classList.remove('btn-works');
-            }
+            if (tabName === 'works') { btnNew.textContent = '+ Novo Trabalho/Prazo'; btnNew.classList.add('btn-works'); } 
+            else { btnNew.textContent = '+ Nova Anotação Aula'; btnNew.classList.remove('btn-works'); }
             renderSubjectList();
         }
 
-        // RENDERIZAÇÃO
         function renderSubjectList() {
-            const grid = document.getElementById('items-grid');
-            grid.innerHTML = '';
-            
+            const grid = document.getElementById('items-grid'); grid.innerHTML = '';
             const items = studyData[currentSubject][currentTab] || [];
             items.sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -415,9 +381,7 @@
         }
 
         function renderReferencesList() {
-            const grid = document.getElementById('refs-grid');
-            grid.innerHTML = '';
-            
+            const grid = document.getElementById('refs-grid'); grid.innerHTML = '';
             const refs = studyData._references || [];
             refs.sort((a, b) => b.id - a.id);
 
@@ -425,8 +389,7 @@
                 grid.innerHTML = `<div class="empty-state">Biblioteca vazia.<br>Clique em '+ Adicionar Texto' acima.</div>`;
             } else {
                 refs.forEach(ref => {
-                    const card = document.createElement('div');
-                    card.className = 'item-card';
+                    const card = document.createElement('div'); card.className = 'item-card';
                     card.innerHTML = `<div class="ref-title">${ref.title}</div><div class="item-preview">${ref.text}</div>`;
                     card.onclick = () => openReader(ref.id, 'reference');
                     grid.appendChild(card);
@@ -434,16 +397,13 @@
             }
         }
 
-        // SALVAR E EXCLUIR
         async function saveData() {
             const btnSave = document.getElementById('btn-save');
             const originalText = btnSave.textContent;
             const text = document.getElementById('item-text').value;
             if (!text.trim()) return alert('O conteúdo não pode estar vazio.');
 
-            btnSave.textContent = "Salvando...";
-            btnSave.disabled = true;
-
+            btnSave.textContent = "Salvando..."; btnSave.disabled = true;
             let targetArray, newItem = {};
 
             if (editorMode === 'subject') {
@@ -462,9 +422,7 @@
                 const idx = targetArray.findIndex(n => n.id === currentItemId);
                 if (idx !== -1) targetArray.splice(idx, 1);
                 newItem.id = currentItemId;
-            } else {
-                newItem.id = Date.now().toString(); 
-            }
+            } else { newItem.id = Date.now().toString(); }
 
             targetArray.push(newItem);
 
@@ -472,11 +430,8 @@
                 await db.collection('banco_estudos_v3').doc('id_joseph_unico').set(studyData);
                 cancelEditor(); 
                 if (editorMode === 'subject') renderSubjectList(); else renderReferencesList();
-            } catch (e) { 
-                alert("Erro ao salvar."); 
-            } finally {
-                btnSave.textContent = originalText; btnSave.disabled = false;
-            }
+            } catch (e) { alert("Erro ao salvar."); } 
+            finally { btnSave.textContent = originalText; btnSave.disabled = false; }
         }
 
         async function deleteCurrentItem() {
@@ -496,7 +451,9 @@
             }
         }
 
-        // IA GEMINI
+        // ==========================================
+        // IA GEMINI - COM TRATAMENTO DE ERRO MELHORADO
+        // ==========================================
         let geminiModel = null;
         const KEY_STORAGE_NAME = 'joseph_gemini_api_key';
 
@@ -515,7 +472,16 @@
             localStorage.setItem(KEY_STORAGE_NAME, key);
             document.getElementById('api-key-area').style.display = 'none';
             initGemini(key);
-            addAiMessage("Chave salva! Como posso ajudar nos estudos hoje?");
+            addAiMessage("✅ Chave salva! Como posso ajudar nos estudos hoje?");
+        }
+
+        // Nova função para resetar a chave que ficou "presa" com erro
+        function resetApiKey() {
+            localStorage.removeItem(KEY_STORAGE_NAME);
+            geminiModel = null;
+            document.getElementById('api-key-area').style.display = 'flex';
+            document.getElementById('api-key-input').value = '';
+            addAiMessage("⚠️ A chave antiga foi apagada do seu navegador. Por favor, cole a sua chave nova ali em cima e clique em Salvar.");
         }
 
         function initGemini(key) {
@@ -523,14 +489,13 @@
                 const genAI = new window.GoogleGenerativeAI(key);
                 geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
             } catch (e) {
-                alert("Erro na chave da IA.");
-                localStorage.removeItem(KEY_STORAGE_NAME);
-                document.getElementById('api-key-area').style.display = 'flex';
+                console.error("Erro na inicialização:", e);
+                resetApiKey();
             }
         }
 
         function buildStudyContext() {
-            let context = "CONTEXTO DE ESTUDOS DO JOSEPH:\n";
+            let context = "CONTEXTO DE ESTUDOS:\n";
             if (studyData._references && studyData._references.length > 0) {
                 studyData._references.forEach(ref => { context += `TEXTO "${ref.title}":\n${ref.text}\n\n`; });
             }
@@ -543,12 +508,12 @@
                     context += "\n";
                 }
             });
-            context += "\nPERGUNTA DO JOSEPH:\n";
+            context += "\nPERGUNTA DO USUÁRIO:\n";
             return context;
         }
 
         async function askAi() {
-            if (!geminiModel) return alert("Configure a Chave API primeiro.");
+            if (!geminiModel) return alert("Cole sua Chave API do Gemini primeiro.");
             const promptInput = document.getElementById('ai-prompt');
             const question = promptInput.value.trim();
             if (!question) return;
@@ -566,7 +531,9 @@
                 const response = await result.response;
                 addAiMessage(response.text());
             } catch (error) {
-                addAiMessage("Erro de comunicação com a IA.");
+                // AGORA O ERRO VAI MOSTRAR O MOTIVO REAL NA TELA
+                console.error(error);
+                addAiMessage(`❌ <b>Erro na comunicação com a API do Google:</b><br><br><i>${error.message}</i><br><br>👉 <b>Dica:</b> Se o erro disser "API key not valid", clique no botão <b>"Trocar Chave API"</b> lá em cima e cole a chave novamente, garantindo que não tenha um espaço vazio no final dela.`);
             } finally {
                 document.getElementById('ai-loading').style.display = 'none';
                 document.getElementById('btn-ai-send').disabled = false;

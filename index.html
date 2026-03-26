@@ -10,7 +10,7 @@
     
     <script type="module">
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-        window.GoogleGenerativeAI = GoogleGenerativeAI; // Torna global para uso no nosso script
+        window.GoogleGenerativeAI = GoogleGenerativeAI;
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -52,7 +52,7 @@
         }
         .menu-item:hover { background-color: var(--sidebar-hover); }
         .menu-item.active { background-color: var(--sidebar-hover); border-left-color: var(--primary); color: var(--primary); }
-        .menu-item.ai-item.active { border-left-color: #a78bfa; color: #a78bfa; } /* Cor roxa para IA */
+        .menu-item.ai-item.active { border-left-color: #a78bfa; color: #a78bfa; }
 
         /* Área Principal */
         .main-content { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; position: relative; }
@@ -76,15 +76,15 @@
         .btn-s:hover { background-color: #cbd5e1; }
         .btn-d { background-color: var(--danger); color: white; padding: 10px 20px; }
         .btn-d:hover { background-color: #dc2626; }
-        .btn-works { background-color: var(--accent); color: white; }
+        .btn-works { background-color: var(--accent); color: white; padding: 10px 20px; }
         .btn-works:hover { background-color: var(--accent-hover); }
 
-        /* Telas (Views) */
-        .view { display: none; animation: fadeIn 0.3s ease; flex: 1; display: flex; flex-direction: column; }
+        /* Telas (Views) - A CORREÇÃO ESTÁ PRINCIPALMENTE NESTA LÓGICA NO HTML ABAIXO */
+        .view { display: none; animation: fadeIn 0.3s ease; flex: 1; flex-direction: column; }
         .view.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Grid de Cards (Matérias e Referências) */
+        /* Grid de Cards */
         .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; align-content: start; }
         .item-card { background-color: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #e2e8f0; transition: 0.2s; display: flex; flex-direction: column; gap: 8px; }
         .item-card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.08); border-color: var(--primary); }
@@ -95,7 +95,7 @@
         .item-preview { font-size: 0.85rem; color: #64748b; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.5; }
         .empty-state { grid-column: 1 / -1; text-align: center; padding: 50px 20px; color: #94a3b8; font-style: italic; background: #ffffff; border-radius: 10px; border: 1px dashed #cbd5e1; margin-top: 20px; }
 
-        /* Contêineres de Editor e Leitor */
+        /* Contêineres */
         .panel { background-color: var(--card-bg); padding: 25px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; max-width: 900px; margin: 0 auto; width: 100%; }
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; margin-bottom: 6px; font-weight: 500; color: #475569; font-size: 0.9rem; }
@@ -109,42 +109,32 @@
         .reader-meta { color: #64748b; font-size: 0.9rem; font-weight: 500; }
         .reader-content { font-size: 1.05rem; line-height: 1.8; color: #1e293b; white-space: pre-wrap; margin-bottom: 20px; }
 
-        /* ========================================= */
-        /* ÁREA DA IA E CHAT                         */
-        /* ========================================= */
+        /* Área da IA */
         #view-ai-chat { display: none; flex-direction: column; }
         #view-ai-chat.active { display: flex; }
-
-        /* Configuração de Chave API */
         .api-key-config { background: #ede9fe; border: 1px solid #ddd6fe; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .api-key-config p { font-size: 0.85rem; color: #5b21b6; flex: 1; min-width: 250px; }
         .api-key-config input { flex: 1; min-width: 200px; padding: 8px; border-radius: 4px; border: 1px solid #c4b5fd; font-family: monospace; }
-        
-        /* Área de Chat */
         .chat-container { flex: 1; background: #fff; border-radius: 10px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; height: 100%; }
         .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #f8fafc; }
-        
         .message { max-width: 80%; padding: 12px 16px; border-radius: 10px; line-height: 1.5; font-size: 0.95rem; position: relative; word-wrap: break-word; }
         .message.user { align-self: flex-end; background-color: #6366f1; color: white; border-bottom-right-radius: 2px; }
         .message.ai { align-self: flex-start; background-color: #f1f5f9; color: #1e293b; border-bottom-left-radius: 2px; border: 1px solid #e2e8f0; }
         .message-meta { font-size: 0.7rem; margin-bottom: 4px; opacity: 0.7; }
-        
         .chat-input-area { padding: 15px; background: #fff; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; }
         #ai-prompt { flex: 1; padding: 12px; border-radius: 6px; border: 1px solid #cbd5e1; resize: none; height: 50px; outline: none; transition: 0.2s; }
         #ai-prompt:focus { border-color: #6366f1; }
         #btn-ai-send { background: #6366f1; color: white; width: 50px; height: 50px; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; }
         #btn-ai-send:hover { background: #4f46e5; }
         #btn-ai-send:disabled { background: #cbd5e1; cursor: not-allowed; }
-
-        /* Loader de Digitação */
         .typing-loader { font-size: 0.8rem; color: #94a3b8; font-style: italic; margin-left: 10px; display: none; margin-bottom: 10px; }
 
-        /* Telas Especiais */
+        /* Loader */
         #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 100; display: flex; justify-content: center; align-items: center; flex-direction: column; font-size: 1.2rem; color: var(--primary); font-weight: 600; backdrop-filter: blur(5px); }
         .loader-spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Responsividade Celular */
+        /* Celular */
         @media (max-width: 768px) {
             body { flex-direction: column; }
             .sidebar { width: 100%; height: auto; flex-direction: row; padding: 5px; overflow-x: auto; white-space: nowrap; -ms-overflow-style: none; scrollbar-width: none; }
@@ -210,14 +200,13 @@
                 <button class="btn-works" onclick="openReferenceEditor()">+ Adicionar Texto</button>
             </div>
             <p style="color: #64748b; margin-bottom: 20px; font-size: 0.9rem;">Cunhe aqui leis, artigos, doutrinas ou PDFs convertidos em texto. A IA usará este conteúdo para responder você.</p>
-            <div class="items-grid" id="refs-grid">
-                </div>
+            <div class="items-grid" id="refs-grid"></div>
         </div>
 
         <div id="view-ai-chat" class="view">
             <div class="api-key-config" id="api-key-area">
                 <i>🔑</i>
-                <p>Para usar a IA grátis, cole sua <strong>Chave API do Google Gemini</strong> aqui. Ela fica salva apenas no seu navegador.</p>
+                <p>Para usar a IA grátis, cole sua <strong>Chave API do Google Gemini</strong> aqui.</p>
                 <input type="password" id="api-key-input" placeholder="Cole sua chave aqui...">
                 <button class="btn-p" style="padding: 8px 15px; font-size: 0.8rem;" onclick="saveApiKey()">Salvar</button>
             </div>
@@ -226,12 +215,12 @@
                 <div class="chat-messages" id="chat-messages">
                     <div class="message ai">
                         <div class="message-meta">Assistente de Estudos</div>
-                        Olá Joseph! Eu sou sua IA pessoal. Eu li todas as suas anotações de aula, seus trabalhos e os textos da sua Biblioteca. Pergunte-me qualquer coisa sobre o conteúdo estudado!
+                        Olá Joseph! Eu sou sua IA pessoal. Eu li todas as suas anotações de aula, trabalhos e os textos da sua Biblioteca. Pergunte-me qualquer coisa!
                     </div>
                 </div>
                 <div class="typing-loader" id="ai-loading">IA pensando...</div>
                 <div class="chat-input-area">
-                    <textarea id="ai-prompt" placeholder="Digite sua pergunta baseada nos seus estudos..."></textarea>
+                    <textarea id="ai-prompt" placeholder="Digite sua pergunta..."></textarea>
                     <button id="btn-ai-send" onclick="askAi()"><i>➤</i></button>
                 </div>
             </div>
@@ -247,7 +236,7 @@
                 </div>
 
                 <div class="input-group" id="group-title" style="display: none;">
-                    <label for="item-title">Título do Texto (Ex: Lei 14.133, Artigo X):</label>
+                    <label for="item-title">Título do Texto (Ex: Lei 14.133):</label>
                     <input type="text" id="item-title" placeholder="Nome para identificar o texto">
                 </div>
 
@@ -283,10 +272,7 @@
     </main>
 
     <script>
-        // =========================================================================
-        // CONFIGURAÇÃO DO FIREBASE COM AS SUAS CHAVES DO GOOGLE
-        // =========================================================================
-        // Joseph, mantenha estas chaves exatamente como estão. Elas são do seu projeto.
+        // CHAVES DO FIREBASE DO JOSEPH
         const firebaseConfig = {
             apiKey: "AIzaSyDVZ5iSxVCs1w32Ibjg2DILUg05fH4H1uc",
             authDomain: "meus-estudos-3c148.firebaseapp.com",
@@ -297,61 +283,49 @@
             measurementId: "G-K775CD0YST"
         };
 
-        // Inicializa o Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // =========================================================================
-        // ESTADO GLOBAL DO APLICATIVO
-        // =========================================================================
+        // ESTADO GLOBAL
         const subjects = ['Ec', 'ESA', 'Psi', 'HDB', 'Port', 'Ora'];
-        let currentSubject = ''; // Qual matéria está selecionada
-        let currentTab = 'notes'; // 'notes' ou 'works'
-        let currentView = 'list'; // 'list', 'ai-chat', 'references'
-        let currentItemId = null; // ID do item sendo lido/editado
-        let studyData = {}; // Banco de dados completo trazido da nuvem
-        let editorMode = 'subject'; // 'subject' (anotação/trab) ou 'reference' (biblioteca)
+        let currentSubject = ''; 
+        let currentTab = 'notes'; 
+        let currentView = 'list'; 
+        let currentItemId = null; 
+        let studyData = {}; 
+        let editorMode = 'subject'; 
 
-        // =========================================================================
-        // 1. CARREGAMENTO INICIAL E SINCRONIZAÇÃO
-        // =========================================================================
+        // CARREGAMENTO
         async function loadAllData() {
             try {
-                // Joseph, usei o ID 'meu_caderno_oficial_v2' para isolar os novos dados globais
                 const docRef = db.collection('banco_estudos_v3').doc('id_joseph_unico');
                 const doc = await docRef.get();
                 
                 if (doc.exists) {
                     studyData = doc.data();
-                    // Garante que a estrutura básica existe (para evitar erros)
                     if (!studyData._references) studyData._references = [];
                     subjects.forEach(sub => {
                         if (!studyData[sub]) studyData[sub] = { notes: [], works: [] };
                     });
                 } else {
-                    // Estrutura inicial do banco se for a primeira vez
                     studyData = { _references: [] };
                     subjects.forEach(sub => { studyData[sub] = { notes: [], works: [] }; });
-                    // Salva estrutura inicial vazia
                     await docRef.set(studyData);
                 }
                 
-                // Esconde tela de carregamento e inicia visual
                 document.getElementById('loading-screen').style.display = 'none';
                 initSidebarMatérias();
-                checkApiKeyOnLoad(); // Verifica se já tem chave da IA salva
+                checkApiKeyOnLoad(); 
 
             } catch (error) {
                 console.error("Erro critico de conexão:", error);
                 document.getElementById('loading-screen').innerHTML = `
                     <p style='color:var(--danger); text-align:center; padding: 20px;'>
-                        Erro ao conectar na nuvem.<br>Verifique se o Firestore está em 'Modo de Teste'.<br>
-                        <small style="color:#64748b; font-weight:400;">${error.message}</small>
+                        Erro ao conectar na nuvem.<br>Verifique o banco de dados.
                     </p>`;
             }
         }
 
-        // Monta o menu de matérias na esquerda
         function initSidebarMatérias() {
             const sidebar = document.getElementById('sidebar');
             subjects.forEach(sub => {
@@ -363,23 +337,16 @@
             });
         }
 
-        // =========================================================================
-        // 2. GERENCIAMENTO DE REGISTROS (MATÉRIAS E BIBLIOTECA)
-        // =========================================================================
-        
-        // --- Navegação ---
-
-        // Selecionar uma Matéria
+        // NAVEGAÇÃO
         function selectSubject(sub, element) {
             currentSubject = sub;
             currentView = 'list';
-            currentTab = 'notes'; // Reinicia para anotações
+            currentTab = 'notes'; 
             editorMode = 'subject';
 
             updateHeader(sub, true, '+ Nova Anotação Aula');
             updateSidebarActive(element);
             
-            // Mostra abas de matéria e define a primeira como ativa
             document.getElementById('subject-tabs').style.display = 'flex';
             const tabBtns = document.querySelectorAll('.tab-btn');
             tabBtns.classList.add('active'); tabBtns.classList.remove('active');
@@ -388,12 +355,10 @@
             showView('list');
         }
 
-        // Selecionar Vistas Estáticas (Chat IA, Biblioteca)
         function selectStaticView(viewName, element) {
             currentSubject = '';
             currentView = viewName;
             
-            // Esconde controles de matéria
             document.getElementById('subject-tabs').style.display = 'none';
             document.getElementById('btn-global-new').style.display = 'none';
 
@@ -404,18 +369,16 @@
                 renderReferencesList();
             } else if (viewName === 'ai-chat') {
                 updateHeader('Assistente Inteligente', false);
-                initChatWindow(); // Rola chat para baixo
+                initChatWindow(); 
             }
             showView(viewName);
         }
 
-        // Mudar entre Anotações e Trabalhos (dentro da matéria)
         function setTab(tabName) {
             currentTab = tabName;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.tab-btn[data-tab="${tabName}"]`).classList.add('active');
             
-            // Atualiza botão de novo
             const btnNew = document.getElementById('btn-global-new');
             if (tabName === 'works') {
                 btnNew.textContent = '+ Novo Trabalho/Prazo';
@@ -424,19 +387,15 @@
                 btnNew.textContent = '+ Nova Anotação Aula';
                 btnNew.classList.remove('btn-works');
             }
-
             renderSubjectList();
         }
 
-        // --- Renderização de Listas (Grids) ---
-
-        // Renderiza cards de anotações/trabalhos de uma matéria
+        // RENDERIZAÇÃO
         function renderSubjectList() {
             const grid = document.getElementById('items-grid');
             grid.innerHTML = '';
             
             const items = studyData[currentSubject][currentTab] || [];
-            // Ordena data mais recente primeiro
             items.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             if (items.length === 0) {
@@ -446,11 +405,8 @@
                 items.forEach(item => {
                     const card = document.createElement('div');
                     card.className = `item-card ${currentTab === 'works' ? 'work-card' : ''}`;
-                    
                     const dateFmt = item.date.split('-').reverse().join('/');
-                    // Prévia do texto sem quebras de linha
                     const preview = item.text.replace(/\n/g, ' ');
-
                     card.innerHTML = `<h3>${dateFmt}</h3><div class="item-preview">${preview}</div>`;
                     card.onclick = () => openReader(item.id, 'subject');
                     grid.appendChild(card);
@@ -458,17 +414,15 @@
             }
         }
 
-        // Renderiza cards da Biblioteca de Referência
         function renderReferencesList() {
             const grid = document.getElementById('refs-grid');
             grid.innerHTML = '';
             
             const refs = studyData._references || [];
-            // Ordena ID (timestamp) mais recente primeiro
             refs.sort((a, b) => b.id - a.id);
 
             if (refs.length === 0) {
-                grid.innerHTML = `<div class="empty-state">Biblioteca vazia.<br>Clique em '+ Adicionar Texto' acima para colar leis, artigos, etc.</div>`;
+                grid.innerHTML = `<div class="empty-state">Biblioteca vazia.<br>Clique em '+ Adicionar Texto' acima.</div>`;
             } else {
                 refs.forEach(ref => {
                     const card = document.createElement('div');
@@ -480,21 +434,17 @@
             }
         }
 
-        // --- Salvar e Excluir na Nuvem ---
-
+        // SALVAR E EXCLUIR
         async function saveData() {
             const btnSave = document.getElementById('btn-save');
             const originalText = btnSave.textContent;
-
             const text = document.getElementById('item-text').value;
             if (!text.trim()) return alert('O conteúdo não pode estar vazio.');
 
-            btnSave.textContent = "Salvando na Nuvem...";
+            btnSave.textContent = "Salvando...";
             btnSave.disabled = true;
 
-            // Define onde salvar baseado no modo do editor
-            let targetArray;
-            let newItem = {};
+            let targetArray, newItem = {};
 
             if (editorMode === 'subject') {
                 const date = document.getElementById('item-date').value;
@@ -503,185 +453,127 @@
                 newItem = { date, text };
             } else {
                 const title = document.getElementById('item-title').value;
-                if (!title.trim()) { btnSave.textContent = originalText; btnSave.disabled = false; return alert('Digite um título para o texto.'); }
+                if (!title.trim()) { btnSave.textContent = originalText; btnSave.disabled = false; return alert('Digite um título.'); }
                 targetArray = studyData._references;
                 newItem = { title, text };
             }
 
-            // Se for edição, remove o antigo
             if (currentItemId) {
                 const idx = targetArray.findIndex(n => n.id === currentItemId);
                 if (idx !== -1) targetArray.splice(idx, 1);
-                newItem.id = currentItemId; // Mantém mesmo ID
+                newItem.id = currentItemId;
             } else {
-                newItem.id = Date.now().toString(); // Cria ID baseado no tempo
+                newItem.id = Date.now().toString(); 
             }
 
             targetArray.push(newItem);
 
             try {
-                // Joseph, aqui é onde o site envia TODO o banco atualizado pro Google
                 await db.collection('banco_estudos_v3').doc('id_joseph_unico').set(studyData);
-                
-                // Limpa editor e volta
                 cancelEditor(); 
                 if (editorMode === 'subject') renderSubjectList(); else renderReferencesList();
-
             } catch (e) { 
-                console.error(e);
-                alert("Erro ao salvar na nuvem. Verifique sua conexão ou se o banco está em 'Modo de Teste'."); 
+                alert("Erro ao salvar."); 
+            } finally {
                 btnSave.textContent = originalText; btnSave.disabled = false;
             }
         }
 
         async function deleteCurrentItem() {
             if (!currentItemId) return;
-            
-            const msg = editorMode === 'subject' 
-                ? "Excluir permanentemente este registro da matéria?" 
-                : "Excluir este texto da Biblioteca? A IA não poderá mais ler este conteúdo.";
-
+            const msg = editorMode === 'subject' ? "Excluir permanentemente este registro?" : "Excluir este texto da Biblioteca?";
             if (!confirm(msg)) return;
 
             const targetArray = editorMode === 'subject' ? studyData[currentSubject][currentTab] : studyData._references;
             const idx = targetArray.findIndex(n => n.id === currentItemId);
 
             if (idx !== -1) {
-                targetArray.splice(idx, 1); // Remove localmente
-
+                targetArray.splice(idx, 1);
                 try {
-                    // Sincroniza com a nuvem
                     await db.collection('banco_estudos_v3').doc('id_joseph_unico').set(studyData);
                     backToList();
-                } catch (e) {
-                    alert("Erro ao excluir da nuvem.");
-                    console.error(e);
-                }
+                } catch (e) { alert("Erro ao excluir."); }
             }
         }
 
-        // =========================================================================
-        // 3. ENGENHARIA DO ASSISTENTE IA (GEMINI RAG)
-        // =========================================================================
+        // IA GEMINI
         let geminiModel = null;
         const KEY_STORAGE_NAME = 'joseph_gemini_api_key';
 
-        // --- Configuração de Segurança ---
-
-        // Checa se usuário já tem chave API salva no navegador
         function checkApiKeyOnLoad() {
             const savedKey = localStorage.getItem(KEY_STORAGE_NAME);
             if (savedKey) {
                 document.getElementById('api-key-input').value = savedKey;
-                document.getElementById('api-key-area').style.display = 'none'; // Esconde aviso
+                document.getElementById('api-key-area').style.display = 'none';
                 initGemini(savedKey);
             }
         }
 
-        // Salva chave API digitada pelo Joseph
         function saveApiKey() {
             const key = document.getElementById('api-key-input').value.trim();
             if (!key) return alert("Cole uma chave API válida.");
             localStorage.setItem(KEY_STORAGE_NAME, key);
             document.getElementById('api-key-area').style.display = 'none';
             initGemini(key);
-            addAiMessage("Chave API configurada e salva com segurança no seu navegador! Como posso te ajudar nos estudos hoje?");
+            addAiMessage("Chave salva! Como posso ajudar nos estudos hoje?");
         }
 
-        // Inicializa o motor da IA
         function initGemini(key) {
             try {
                 const genAI = new window.GoogleGenerativeAI(key);
-                // Usamos o modelo 1.5 Flash que é rápido e tem janela de contexto gigante (1 milhão de tokens)
                 geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
             } catch (e) {
-                console.error("Erro ao iniciar Gemini:", e);
-                alert("Erro ao inicializar IA. Verifique se a chave API está correta.");
-                localStorage.removeItem(KEY_STORAGE_NAME); // Limpa chave errada
+                alert("Erro na chave da IA.");
+                localStorage.removeItem(KEY_STORAGE_NAME);
                 document.getElementById('api-key-area').style.display = 'flex';
             }
         }
 
-        // --- Lógica do RAG (Segunda Cérebro) ---
-
-        // Função crucial: "Empacota" todo o seu conhecimento para enviar pro Gemini
         function buildStudyContext() {
-            let context = "--- CONTEXTO DE ESTUDOS DO JOSEPH (SEU SEGUNDO CÉREBRO) ---\n\n";
-            context += "Use as informações abaixo para responder. Se a resposta não estiver aqui, diga educadamente que não sabe com base nos dados fornecidos.\n\n";
-
-            // 1. Inclui Biblioteca de Referência (Leis/Artigos)
-            context += "== BIBLIOTECA DE REFERÊNCIA (LEIS, DOUTRINAS, ARTIGOS) ==\n";
+            let context = "CONTEXTO DE ESTUDOS DO JOSEPH:\n";
             if (studyData._references && studyData._references.length > 0) {
-                studyData._references.forEach(ref => {
-                    context += `TEXTO TITULADO "${ref.title}":\n[INICIO DO TEXTO]\n${ref.text}\n[FIM DO TEXTO]\n\n`;
-                });
-            } else { context += "Nenhum texto de referência cadastrado.\n\n"; }
-
-            // 2. Inclui Anotações de Aula e Trabalhos (De todas as matérias)
-            context += "== ANOTAÇÕES DE AULA E DETALHES DE TRABALHOS ==\n";
-            let temDadosMaterias = false;
+                studyData._references.forEach(ref => { context += `TEXTO "${ref.title}":\n${ref.text}\n\n`; });
+            }
             subjects.forEach(sub => {
                 const data = studyData[sub];
                 if ((data.notes && data.notes.length > 0) || (data.works && data.works.length > 0)) {
-                    temDadosMaterias = true;
-                    context += `MATÉRIA: ${sub}\n`;
-                    // Anotações
-                    data.notes.forEach(n => {
-                        context += `- Anotação de Aula (${n.date.split('-').reverse().join('/')}): ${n.text}\n`;
-                    });
-                    // Trabalhos
-                    data.works.forEach(w => {
-                        context += `- Trabalho/Prazo (${w.date.split('-').reverse().join('/')}): ${w.text}\n`;
-                    });
+                    context += `MATÉRIA ${sub}:\n`;
+                    data.notes.forEach(n => { context += `- Aula (${n.date}): ${n.text}\n`; });
+                    data.works.forEach(w => { context += `- Trabalho (${w.date}): ${w.text}\n`; });
                     context += "\n";
                 }
             });
-            if (!temDadosMaterias) context += "Nenhuma anotação de aula ou trabalho cadastrado ainda.\n\n";
-
-            context += "--- FIM DO CONTEXTO ---\n\nPROMPT DO USUÁRIO JOSEPH:\n";
+            context += "\nPERGUNTA DO JOSEPH:\n";
             return context;
         }
 
-        // Envia pergunta para IA
         async function askAi() {
             if (!geminiModel) return alert("Configure a Chave API primeiro.");
             const promptInput = document.getElementById('ai-prompt');
             const question = promptInput.value.trim();
             if (!question) return;
 
-            // Interface
             addUserMessage(question);
-            promptInput.value = ''; // Limpa input
-            promptInput.style.height = '50px'; // Reseta altura
+            promptInput.value = ''; 
+            promptInput.style.height = '50px'; 
             document.getElementById('ai-loading').style.display = 'block';
             document.getElementById('btn-ai-send').disabled = true;
 
-            // Joseph, este é o "Pulo do Gato": Construímos o contexto inteiro aqui
             const fullPrompt = buildStudyContext() + question;
 
             try {
-                // Envia prompt gigante (Contexto + Pergunta) pro Google
                 const result = await geminiModel.generateContent(fullPrompt);
                 const response = await result.response;
-                const text = response.text();
-                
-                document.getElementById('ai-loading').style.display = 'none';
-                addAiMessage(text);
-
+                addAiMessage(response.text());
             } catch (error) {
-                console.error("Erro na IA:", error);
-                document.getElementById('ai-loading').style.display = 'none';
-                addAiMessage(`Ops, deu um erro na comunicação com o Google. Verifique sua conexão ou se excedeu a cota gratuita da API.<br><small style="color:red">${error.message}</small>`);
+                addAiMessage("Erro de comunicação com a IA.");
             } finally {
+                document.getElementById('ai-loading').style.display = 'none';
                 document.getElementById('btn-ai-send').disabled = false;
             }
         }
 
-        // =========================================================================
-        // 4. AUXILIARES DE INTERFACE (UI) E CHAT
-        // =========================================================================
-        
-        // Abridores de Editor
+        // INTERFACE (UI)
         document.getElementById('btn-global-new').onclick = () => { openSubjectEditor(); };
 
         function openSubjectEditor() {
@@ -691,36 +583,29 @@
             document.getElementById('group-title').style.display = 'none';
             document.getElementById('item-date').value = getTodayDate();
             document.getElementById('item-text').value = '';
-            document.getElementById('item-text').placeholder = "Escreva os pontos principais da aula aqui...";
             showView('editor');
         }
 
         function openReferenceEditor() {
             currentItemId = null; editorMode = 'reference';
-            document.getElementById('editor-title').textContent = "Adicionar Texto à Biblioteca (RAG)";
+            document.getElementById('editor-title').textContent = "Adicionar Texto à Biblioteca";
             document.getElementById('group-date').style.display = 'none';
             document.getElementById('group-title').style.display = 'block';
             document.getElementById('item-title').value = '';
             document.getElementById('item-text').value = '';
-            document.getElementById('item-text').placeholder = "Cole aqui o texto da lei, artigo, ou resumo do PDF...";
             showView('editor');
         }
 
-        // Cancelar edição
         function cancelEditor() { backToList(); }
 
-        // Abrir Leitor
         function openReader(id, mode) {
-            currentItemId = id;
-            editorMode = mode;
+            currentItemId = id; editorMode = mode;
             let item;
 
             if (mode === 'subject') {
                 item = studyData[currentSubject][currentTab].find(n => n.id === id);
                 document.getElementById('read-title').textContent = currentSubject;
-                const dateFmt = item.date.split('-').reverse().join('/');
-                document.getElementById('read-date').textContent = dateFmt;
-                
+                document.getElementById('read-date').textContent = item.date.split('-').reverse().join('/');
                 const badge = document.getElementById('read-badge');
                 badge.textContent = currentTab === 'works' ? 'TRABALHO/PRAZO' : 'ANOTAÇÃO AULA';
                 badge.style.backgroundColor = currentTab === 'works' ? 'var(--accent)' : 'var(--primary)';
@@ -729,15 +614,15 @@
                 item = studyData._references.find(r => r.id === id);
                 document.getElementById('read-title').textContent = item.title;
                 document.getElementById('read-date').textContent = "Biblioteca (IA)";
-                document.getElementById('read-badge').textContent = 'TEXTO DE REFERÊNCIA';
-                document.getElementById('read-badge').style.cssText = 'background:#ddd6fe; color:#5b21b6; padding:4px 8px; border-radius:4px; font-size:0.8rem;';
+                const badge = document.getElementById('read-badge');
+                badge.textContent = 'TEXTO DE REFERÊNCIA';
+                badge.style.cssText = 'background:#ddd6fe; color:#5b21b6; padding:4px 8px; border-radius:4px; font-size:0.8rem;';
             }
 
             document.getElementById('read-content').textContent = item.text;
             showView('reader');
         }
 
-        // Preparar Edição de item existente
         function editCurrentItem() {
             let item;
             if (editorMode === 'subject') {
@@ -757,20 +642,17 @@
             showView('editor');
         }
 
-        // Voltar do leitor/editor
         function backToList() {
             if (editorMode === 'subject') { showView('list'); renderSubjectList(); } 
             else { showView('references'); renderReferencesList(); }
         }
 
-        // Gerenciador de Views (Telas)
         function showView(viewName) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(`view-${viewName}`).classList.add('active');
-            document.querySelector('.main-content').scrollTop = 0; // Rola pro topo
+            document.querySelector('.main-content').scrollTop = 0; 
         }
 
-        // Helpers Visuais
         function updateHeader(title, showNewBtn, newBtnText = '+ Novo') {
             document.getElementById('main-title').textContent = title;
             const btn = document.getElementById('btn-global-new');
@@ -786,8 +668,6 @@
 
         function getTodayDate() { return new Date().toISOString().split('T'); }
 
-        // --- Funções de Chat UI ---
-
         function addUserMessage(text) {
             const container = document.getElementById('chat-messages');
             const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
@@ -798,36 +678,25 @@
         function addAiMessage(text) {
             const container = document.getElementById('chat-messages');
             const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            // Joseph, note que o Gemini responde em Markdown (formatação). 
-            // Para simplificar, estamos exibindo como texto puro. Se quiser negrito/listas no futuro, me avise.
             container.innerHTML += `<div class="message ai"><div class="message-meta">${time} - Assistente IA</div>${text}</div>`;
             initChatWindow();
         }
 
         function initChatWindow() {
             const chatBody = document.getElementById('chat-messages');
-            chatBody.scrollTop = chatBody.scrollHeight; // Rola pro final
+            chatBody.scrollTop = chatBody.scrollHeight; 
         }
 
-        // Auto-ajuste da altura do textarea do chat
         const promptTA = document.getElementById('ai-prompt');
         promptTA.addEventListener('input', function() {
             this.style.height = 'auto';
-            const newHeight = Math.min(this.scrollHeight, 150); // Máximo 150px
-            this.style.height = newHeight + 'px';
+            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
         });
 
-        // Enviar com Enter (e Shift+Enter para nova linha)
         promptTA.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                askAi();
-            }
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askAi(); }
         });
 
-        // =========================================================================
-        // INÍCIO DE TUDO
-        // =========================================================================
         window.onload = loadAllData;
     </script>
 </body>

@@ -68,8 +68,6 @@
         .btn-d:hover { background-color: #dc2626; }
         .btn-works { background-color: var(--accent); color: white; padding: 10px 20px; }
         .btn-works:hover { background-color: var(--accent-hover); }
-        
-        /* Botão Novo: Resetar Chave API */
         .btn-reset { background: transparent; color: #64748b; border: 1px solid #cbd5e1; padding: 6px 12px; font-size: 0.85rem; }
         .btn-reset:hover { background: #f1f5f9; color: var(--danger); border-color: var(--danger); }
 
@@ -325,7 +323,7 @@
             updateHeader(sub, true, '+ Nova Anotação Aula');
             updateSidebarActive(element);
             document.getElementById('subject-tabs').style.display = 'flex';
-            document.getElementById('btn-reset-key').style.display = 'none'; // Esconde botão de trocar chave
+            document.getElementById('btn-reset-key').style.display = 'none';
             const tabBtns = document.querySelectorAll('.tab-btn');
             tabBtns.classList.add('active'); tabBtns.classList.remove('active');
             renderSubjectList(); showView('list');
@@ -335,7 +333,7 @@
             currentSubject = ''; currentView = viewName;
             document.getElementById('subject-tabs').style.display = 'none';
             document.getElementById('btn-global-new').style.display = 'none';
-            document.getElementById('btn-reset-key').style.display = viewName === 'ai-chat' ? 'block' : 'none'; // Mostra botão de trocar chave só no chat
+            document.getElementById('btn-reset-key').style.display = viewName === 'ai-chat' ? 'block' : 'none';
 
             updateSidebarActive(element);
 
@@ -452,7 +450,7 @@
         }
 
         // ==========================================
-        // IA GEMINI - COM TRATAMENTO DE ERRO MELHORADO
+        // IA GEMINI - CORREÇÃO DO NOME DO MODELO
         // ==========================================
         let geminiModel = null;
         const KEY_STORAGE_NAME = 'joseph_gemini_api_key';
@@ -475,7 +473,6 @@
             addAiMessage("✅ Chave salva! Como posso ajudar nos estudos hoje?");
         }
 
-        // Nova função para resetar a chave que ficou "presa" com erro
         function resetApiKey() {
             localStorage.removeItem(KEY_STORAGE_NAME);
             geminiModel = null;
@@ -487,7 +484,8 @@
         function initGemini(key) {
             try {
                 const genAI = new window.GoogleGenerativeAI(key);
-                geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                // CORREÇÃO AQUI: Mudado de gemini-1.5-flash para gemini-pro (que o Google sempre reconhece)
+                geminiModel = genAI.getGenerativeModel({ model: "gemini-pro" });
             } catch (e) {
                 console.error("Erro na inicialização:", e);
                 resetApiKey();
@@ -531,9 +529,8 @@
                 const response = await result.response;
                 addAiMessage(response.text());
             } catch (error) {
-                // AGORA O ERRO VAI MOSTRAR O MOTIVO REAL NA TELA
                 console.error(error);
-                addAiMessage(`❌ <b>Erro na comunicação com a API do Google:</b><br><br><i>${error.message}</i><br><br>👉 <b>Dica:</b> Se o erro disser "API key not valid", clique no botão <b>"Trocar Chave API"</b> lá em cima e cole a chave novamente, garantindo que não tenha um espaço vazio no final dela.`);
+                addAiMessage(`❌ <b>Erro na comunicação com a API do Google:</b><br><br><i>${error.message}</i><br><br>👉 Se o problema persistir, clique em <b>Trocar Chave API</b> e tente gerar uma nova chave no painel.`);
             } finally {
                 document.getElementById('ai-loading').style.display = 'none';
                 document.getElementById('btn-ai-send').disabled = false;

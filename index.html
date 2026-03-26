@@ -450,7 +450,7 @@
         }
 
         // ==========================================
-        // IA GEMINI - CORREÇÃO DO NOME DO MODELO
+        // IA GEMINI - MOTOR ATUALIZADO (gemini-2.5-flash)
         // ==========================================
         let geminiModel = null;
         const KEY_STORAGE_NAME = 'joseph_gemini_api_key';
@@ -484,8 +484,8 @@
         function initGemini(key) {
             try {
                 const genAI = new window.GoogleGenerativeAI(key);
-                // CORREÇÃO AQUI: Mudado de gemini-1.5-flash para gemini-pro (que o Google sempre reconhece)
-                geminiModel = genAI.getGenerativeModel({ model: "gemini-pro" });
+                // O modelo 2.5-flash é a versão atual mais rápida e gratuita disponibilizada pelo Google.
+                geminiModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
             } catch (e) {
                 console.error("Erro na inicialização:", e);
                 resetApiKey();
@@ -530,7 +530,7 @@
                 addAiMessage(response.text());
             } catch (error) {
                 console.error(error);
-                addAiMessage(`❌ <b>Erro na comunicação com a API do Google:</b><br><br><i>${error.message}</i><br><br>👉 Se o problema persistir, clique em <b>Trocar Chave API</b> e tente gerar uma nova chave no painel.`);
+                addAiMessage(`❌ <b>Erro na comunicação com a API do Google:</b><br><br><i>${error.message}</i><br><br>👉 Se o problema persistir, verifique a sua conexão com a internet ou gere uma nova chave.`);
             } finally {
                 document.getElementById('ai-loading').style.display = 'none';
                 document.getElementById('btn-ai-send').disabled = false;
